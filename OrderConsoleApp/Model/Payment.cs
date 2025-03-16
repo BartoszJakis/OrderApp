@@ -9,7 +9,7 @@ namespace OrderConsoleApp.Model
 {
     public class Payment
     {
-        public float Amount { get; set; }
+        public float Price { get; set; }
         public PaymentType PaymentType { get; set; }
     }
 }

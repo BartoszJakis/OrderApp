@@ -8,30 +8,30 @@ using System.Threading.Tasks;
 
 namespace OrderConsoleApp.Repostiory
 {
-    public class OrderRepository
+    public class OrderRepository : IOrderRepository
     {
-        private List<Order> _orders = new List<Order>(); 
+        private List<Order> _orders = new List<Order>();
 
-        public void AddOrder (Order order)
+        public void AddOrder(Order order)
         {
             _orders.Add(order);
 
         }
 
         public List<Order> GetOrders()
-        { 
-            return _orders; 
+        {
+            return _orders;
         }
 
-        public Order GetOrderById (Guid id)
+        public Order GetOrderById(Guid id)
         {
             return _orders.FirstOrDefault(o => o.Id == id);
         }
 
-        public void UpdateOrder(Guid id, Order order, OrderStatus status)
+        public void UpdateOrder(Guid id, OrderStatus status)
         {
-            var updatedOrder = _orders.FirstOrDefault(o => o.Id == order.Id);
-            if (order != null)
+            var updatedOrder = _orders.FirstOrDefault(o => o.Id ==id );
+            if (updatedOrder != null)
             {
                 updatedOrder.OrderStatus = status;
             }
