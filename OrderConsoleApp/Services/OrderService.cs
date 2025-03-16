@@ -19,13 +19,7 @@ namespace OrderConsoleApp.Services
 
         public void CreateOrder(Order order)
         {
-            var context = new ValidationContext(order, serviceProvider: null, items: null);
-            var results = new List<ValidationResult>();
-
-            if (!Validator.TryValidateObject(order, context, results, true))
-            {
-                throw new ValidationException("Order validation failed: " + string.Join(", ", results));
-            }
+          
 
             _orderRepository.AddOrder(order);
         }

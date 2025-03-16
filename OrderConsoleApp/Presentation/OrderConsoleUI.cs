@@ -2,6 +2,7 @@
 using OrderConsoleApp.Model;
 using OrderConsoleApp.Services;
 using System;
+using System.Text.RegularExpressions;
 
 namespace OrderConsoleApp.Interaction
 {
@@ -28,16 +29,52 @@ namespace OrderConsoleApp.Interaction
                     return;
                 }
 
-                Console.Write("Enter Client Type (1 = Company, 2 = Person): ");
-                string clientTypeInput = Console.ReadLine();
-                ClientType clientType = clientTypeInput == "1" ? ClientType.Company : ClientType.Person;
+                string clientTypeInput;
+                ClientType clientType;
+                do
+                {
+                    Console.Write("Enter Client Type (1 = Company, 2 = Person): ");
+                    clientTypeInput = Console.ReadLine();
+                    if(clientTypeInput != "1" && clientTypeInput != "2")
+                    {
+                        Console.Write("Wrong input! Choose either 1 or 2.");
+                        Console.WriteLine();
+                    }
+                } while (clientTypeInput != "1" && clientTypeInput != "2");
 
-                Console.Write("Enter Delivery Address: ");
-                string address = Console.ReadLine();
+                clientType = clientTypeInput == "1" ? ClientType.Company : ClientType.Person;
 
-                Console.Write("Payment Type (1 = Card, 2 = Cash on Delivery): ");
-                string paymentTypeInput = Console.ReadLine();
-                PaymentType paymentType = paymentTypeInput == "1" ? PaymentType.Card : PaymentType.CashWhenDelivered;
+                string address;
+                Regex addressPattern = new Regex(@"^[A-Za-z\s]+\s\d+[A-Za-z]?$"); 
+
+                do
+                {
+                    Console.Write("Enter Delivery Address (for example: Boska 25): ");
+                    address = Console.ReadLine();
+                    if (!addressPattern.IsMatch(address))
+                    {
+                        Console.Write("Address must be in the format: Street Name + Number");
+                        Console.WriteLine();
+                    }
+                } while (!addressPattern.IsMatch(address));
+
+
+                string paymentTypeInput;
+                PaymentType paymentType;
+                do
+                {
+                    Console.Write("Payment Type (1 = Card, 2 = Cash on Delivery): ");
+                    paymentTypeInput = Console.ReadLine();
+                    
+                    if(paymentTypeInput != "1" && paymentTypeInput != "2")
+                    {
+                        Console.Write("Wrong input! Choose either 1 or 2.");
+                        Console.WriteLine();
+                    }
+                } while (paymentTypeInput != "1" && paymentTypeInput != "2");
+
+                paymentType = paymentTypeInput == "1" ? PaymentType.Card : PaymentType.CashWhenDelivered;
+
 
                 var order = new Order
                 {
@@ -165,7 +202,7 @@ namespace OrderConsoleApp.Interaction
             Console.WriteLine("==============================================");
             Console.WriteLine($"|  ID:          {order.Id}");
             Console.WriteLine($"|  Product:     {order.ProductName}");
-            Console.WriteLine($"|  Price:       {order.Payment.Price:C}");
+            Console.WriteLine($"|  Price:       {order.Payment.Price} PLN");
             Console.WriteLine($"|  Client Type: {order.Client.ClientType}");
             Console.WriteLine($"|  Address:     {order.Address}");
             Console.WriteLine($"|  Status:      {order.OrderStatus}");
