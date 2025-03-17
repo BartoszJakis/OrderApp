@@ -15,7 +15,7 @@ namespace OrderConsoleApp.Interaction
             _orderService = orderService;
         }
 
-        private void CreateOrder()
+        private async Task CreateOrder()
         {
             try
             {
@@ -80,13 +80,14 @@ namespace OrderConsoleApp.Interaction
                 {
                     Id = Guid.NewGuid(),
                     ProductName = productName,
-                    Payment = new Payment { Price = (float)price, PaymentType = paymentType },
-                    Client = new Client { ClientType = clientType },
+                    Payment = paymentType,
+                    Price = price,
+                    Client = clientType,
                     Address = address,
                     OrderStatus = OrderStatus.New
                 };
 
-                _orderService.CreateOrder(order);
+                await _orderService.CreateOrder(order);
                 Console.WriteLine($"Order {order.Id} has been successfully created!");
             }
             catch (Exception ex)
@@ -95,7 +96,7 @@ namespace OrderConsoleApp.Interaction
             }
         }
 
-        private void MoveToWarehouse()
+        private async Task MoveToWarehouse()
         {
             try
             {
@@ -106,7 +107,7 @@ namespace OrderConsoleApp.Interaction
                     return;
                 }
 
-                _orderService.MoveToWarehouse(orderId);
+                await _orderService.MoveToWarehouse(orderId);
                 Console.WriteLine($"Order {orderId} moved to warehouse.");
             }
             catch (Exception ex)
@@ -115,7 +116,7 @@ namespace OrderConsoleApp.Interaction
             }
         }
 
-        private void MoveToShipment()
+        private async Task MoveToShipment()
         {
             try
             {
@@ -126,7 +127,7 @@ namespace OrderConsoleApp.Interaction
                     return;
                 }
 
-              _orderService.MoveToShipment(orderId);
+              await _orderService.MoveToShipment(orderId);
                 Console.WriteLine($"Order {orderId} is being shipped...");
             }
             catch (Exception ex)
@@ -135,12 +136,12 @@ namespace OrderConsoleApp.Interaction
             }
         }
 
-        private void DisplayOrders()
+        private async Task DisplayOrders()
         {
             try
             {
-                var orders = _orderService.GetOrders();
-                if (orders.Count == 0)
+                var orders = await _orderService.GetOrders();
+                if (orders.Count() == 0)
                 {
                     Console.WriteLine("No orders available.");
                     return;
@@ -158,7 +159,7 @@ namespace OrderConsoleApp.Interaction
             }
         }
 
-        public void DisplayMenu()
+        public async Task DisplayMenu()
         {
             while (true)
             {
@@ -174,16 +175,16 @@ namespace OrderConsoleApp.Interaction
                 switch (choice)
                 {
                     case "1":
-                        CreateOrder();
+                        await CreateOrder();
                         break;
                     case "2":
-                        MoveToWarehouse();
+                        await MoveToWarehouse();
                         break;
                     case "3":
-                        MoveToShipment();
+                        await MoveToShipment();
                         break;
                     case "4":
-                        DisplayOrders();
+                        await DisplayOrders();
                         break;
                     case "5":
                         return;
@@ -202,8 +203,8 @@ namespace OrderConsoleApp.Interaction
             Console.WriteLine("==============================================");
             Console.WriteLine($"|  ID:          {order.Id}");
             Console.WriteLine($"|  Product:     {order.ProductName}");
-            Console.WriteLine($"|  Price:       {order.Payment.Price} PLN");
-            Console.WriteLine($"|  Client Type: {order.Client.ClientType}");
+            Console.WriteLine($"|  Price:       {order.Price} PLN");
+            Console.WriteLine($"|  Client Type: {order.Client}");
             Console.WriteLine($"|  Address:     {order.Address}");
             Console.WriteLine($"|  Status:      {order.OrderStatus}");
             Console.WriteLine("==============================================\n");

@@ -2,6 +2,7 @@
 using OrderConsoleApp.Model;
 using OrderConsoleApp.Repostiory;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading;
@@ -17,35 +18,36 @@ namespace OrderConsoleApp.Services
             _orderRepository = orderRepository;
         }
 
-        public void CreateOrder(Order order)
+        public async Task CreateOrder(Order order)
         {
-          
 
-            _orderRepository.AddOrder(order);
+
+            await _orderRepository.AddOrder(order);
         }
 
-        public void MoveToWarehouse(Guid orderId)
+        public async Task MoveToWarehouse(Guid orderId)
         {
-            var order = _orderRepository.GetOrderById(orderId);
+            var order = await _orderRepository.GetOrderById(orderId);
             if (order == null)
             {
                 throw new KeyNotFoundException("Order not found.");
             }
 
-            if (order.Payment.PaymentType == PaymentType.CashWhenDelivered && order.Payment.Price >= 2500)
-            {
-                order.OrderStatus = OrderStatus.ReturnedToClient;
+            if (order.Payment == PaymentType.CashWhenDelivered && order.Price >= 2500)
+            {              
+                await _orderRepository.UpdateOrder(orderId, OrderStatus.ReturnedToClient);
                 throw new InvalidOperationException($"Order {orderId} returned to client due to high cash payment.");
             }
             else
             {
-                order.OrderStatus = OrderStatus.InWarehouse;
+                await _orderRepository.UpdateOrder(orderId, OrderStatus.InWarehouse);
             }
+            
         }
 
-        public  void MoveToShipment(Guid orderId)
+        public async Task MoveToShipment(Guid orderId)
         {
-            var order = _orderRepository.GetOrderById(orderId);
+            var order = await _orderRepository.GetOrderById(orderId);
             if (order == null)
             {
                 throw new KeyNotFoundException("Order not found.");
@@ -56,20 +58,16 @@ namespace OrderConsoleApp.Services
                 throw new InvalidOperationException("Order must be in warehouse before shipping.");
             }
 
-            order.OrderStatus = OrderStatus.InShipment;
-
-            
-            Task.Delay(5000).ContinueWith(t =>
-            {
-                order.OrderStatus = OrderStatus.Closed;
-            });
+            await _orderRepository.UpdateOrder(orderId, OrderStatus.InShipment);
+            await Task.Delay(5000);
+            await _orderRepository.UpdateOrder(orderId, OrderStatus.Closed);
         }
 
-        public List<Order> GetOrders()
+        public async Task<IEnumerable<Order>> GetOrders()
         {
-            return _orderRepository.GetOrders();
+            return await _orderRepository.GetOrders();
         }
 
-     
+
     }
 }

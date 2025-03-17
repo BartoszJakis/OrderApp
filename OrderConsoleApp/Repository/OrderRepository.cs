@@ -1,4 +1,5 @@
-﻿using OrderConsoleApp.Enum;
+﻿using Microsoft.EntityFrameworkCore;
+using OrderConsoleApp.Enum;
 using OrderConsoleApp.Model;
 using System;
 using System.Collections.Generic;
@@ -10,30 +11,37 @@ namespace OrderConsoleApp.Repostiory
 {
     public class OrderRepository : IOrderRepository
     {
-        private List<Order> _orders = new List<Order>();
+       private readonly OrderAppDbContext _dbContext;
 
-        public void AddOrder(Order order)
+        public OrderRepository(OrderAppDbContext dbContext)
         {
-            _orders.Add(order);
+            _dbContext = dbContext;
+        }
+        public async Task AddOrder(Order order)
+        {
+            await _dbContext.Orders.AddAsync(order);
+            await _dbContext.SaveChangesAsync();
 
         }
 
-        public List<Order> GetOrders()
+
+        public async Task<IEnumerable<Order>> GetOrders()
         {
-            return _orders;
+            return await _dbContext.Orders.ToListAsync();
         }
 
-        public Order GetOrderById(Guid id)
+        public async Task<Order> GetOrderById(Guid id)
         {
-            return _orders.FirstOrDefault(o => o.Id == id);
+            return await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id == id);
         }
 
-        public void UpdateOrder(Guid id, OrderStatus status)
+        public async Task UpdateOrder(Guid id, OrderStatus status)
         {
-            var updatedOrder = _orders.FirstOrDefault(o => o.Id ==id );
+            var updatedOrder = await _dbContext.Orders.FirstOrDefaultAsync(o => o.Id ==id );
             if (updatedOrder != null)
             {
                 updatedOrder.OrderStatus = status;
+                await _dbContext.SaveChangesAsync();
             }
         }
 

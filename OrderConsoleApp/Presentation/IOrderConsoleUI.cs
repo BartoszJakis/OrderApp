@@ -2,8 +2,6 @@
 {
     public interface IOrderConsoleUI
     {
-       
-
-        void DisplayMenu();
+       Task DisplayMenu();
     }
 }

@@ -15,14 +15,14 @@ namespace OrderConsoleApp.Model
       
         public Guid Id { get; set; }
 
-        public Payment Payment { get; set; }
+        public PaymentType Payment { get; set; }
+
+        public decimal Price { get; set; }
 
         public string ProductName { get; set; }
 
-        public Client Client { get; set; }
-
-      
-        
+        public ClientType Client { get; set; }
+       
         public string Address { get; set; }
 
         public OrderStatus OrderStatus { get; set; } = OrderStatus.New;

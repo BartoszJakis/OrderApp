@@ -5,9 +5,9 @@ namespace OrderConsoleApp.Repostiory
 {
     public interface IOrderRepository
     {
-        void AddOrder(Order order);
-        Order GetOrderById(Guid id);
-        List<Order> GetOrders();
-        void UpdateOrder(Guid id, OrderStatus status);
+        Task AddOrder(Order order);
+        Task<IEnumerable<Order>> GetOrders();
+        Task<Order> GetOrderById(Guid id);
+        Task UpdateOrder(Guid id, OrderStatus status);
     }
 }

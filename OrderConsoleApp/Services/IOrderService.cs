@@ -4,9 +4,9 @@ namespace OrderConsoleApp.Services
 {
     public interface IOrderService
     {
-        void CreateOrder(Order order);
-        List<Order> GetOrders();
-        void MoveToShipment(Guid orderId);
-        void MoveToWarehouse(Guid orderId);
+        Task CreateOrder(Order order);
+        Task<IEnumerable<Order>> GetOrders();
+        Task MoveToShipment(Guid orderId);
+        Task MoveToWarehouse(Guid orderId);
     }
 }
