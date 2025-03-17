@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderConsoleApp", "OrderConsoleApp.csproj", "{46B722E7-1C81-429D-9538-C3EDAFA351FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderConsoleApp", "OrderConsoleApp.csproj", "{46B722E7-1C81-429D-9538-C3EDAFA351FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderApp.Tests", "..\OrderApp.Tests\OrderApp.Tests.csproj", "{3EDB6325-BD01-46DD-95E6-3D154D8AC13E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{46B722E7-1C81-429D-9538-C3EDAFA351FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46B722E7-1C81-429D-9538-C3EDAFA351FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46B722E7-1C81-429D-9538-C3EDAFA351FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EDB6325-BD01-46DD-95E6-3D154D8AC13E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EDB6325-BD01-46DD-95E6-3D154D8AC13E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EDB6325-BD01-46DD-95E6-3D154D8AC13E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EDB6325-BD01-46DD-95E6-3D154D8AC13E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
