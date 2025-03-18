@@ -5,11 +5,10 @@ A console application that allows order management. Users can add orders, change
 # Technologies
 
     C# (.NET)
-    PostgreSQL (baza danych)
+    PostgreSQL 
     Entity Framework Core
-    Moq (do testów)
-    MSTest (framework testowy)
-    Docker & Docker Compose (do uruchamiania bazy danych)
+    MSTest
+    Docker & Docker Compose
    
 # Running the PostgreSQL Database
 To correctly start the database, enter the following command in the terminal:
