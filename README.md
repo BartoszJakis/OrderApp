@@ -11,7 +11,7 @@ Aplikacja konsolowa umożliwiająca zarządzanie zamówieniami. Użytkownicy mog
     MSTest (framework testowy)
     Docker & Docker Compose (do uruchamiania bazy danych)
    
-# uruchamianie bazy danych PostgreSQL
+# Uruchamianie bazy danych PostgreSQL
 Aby poprawnie uruchomić bazę danych należy wpisać w terminalu komendę:
 
     docker-compose up -d
