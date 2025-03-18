@@ -10,7 +10,7 @@ Aplikacja konsolowa umożliwiająca zarządzanie zamówieniami. Użytkownicy mog
     Moq (do testów)
     MSTest (framework testowy)
     Docker & Docker Compose (do uruchamiania bazy danych)
-    docker-compose up -d
+   
 # uruchamianie bazy danych PostgreSQL
 Aby poprawnie uruchomić bazę danych należy wpisać w terminalu komendę:
 
