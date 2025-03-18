@@ -1,102 +1,115 @@
-//using OrderConsoleApp.Enum;
-//using OrderConsoleApp.Interaction;
-//using OrderConsoleApp.Model;
-//using OrderConsoleApp.Repostiory;
-//using OrderConsoleApp.Services;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using OrderConsoleApp.Enum;
+using OrderConsoleApp.Model;
+
+using OrderConsoleApp.Repostiory;
+using OrderConsoleApp.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace OrderApp.Tests
+{
+    [TestClass]
+    public class OrderServiceTests
+    {
+        private Mock<IOrderRepository> _orderRepositoryMock;
+        private OrderService _orderService;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _orderRepositoryMock = new Mock<IOrderRepository>();
+            _orderService = new OrderService(_orderRepositoryMock.Object);
+        }
+
+        [TestMethod]
+        public async Task CreateOrderAsync_ShouldAddOrder()
+        {
+            var order = new Order
+            {
+                Id = Guid.NewGuid(),
+                ProductName = "Kostka Rubika",
+                Payment = PaymentType.Card,
+                Price = 100,
+                Client = ClientType.Person,
+                Address = "Testowa 10",
+                OrderStatus = OrderStatus.New
+            };
+
+            await _orderService.CreateOrder(order);
+
+            _orderRepositoryMock.Verify(repo => repo.AddOrder(order), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task MoveToWarehouseAsync_ShouldUpdateOrderStatus()
+        {
+            var orderId = Guid.NewGuid();
+            var order = new Order
+            {
+                Id = orderId,
+                ProductName = "Kostka Rubika",
+                Payment = PaymentType.Card,
+                Price=100,
+                Client = ClientType.Person,
+                Address = "Testowa 10",
+                OrderStatus = OrderStatus.New
+            };
+
+            _orderRepositoryMock.Setup(repo => repo.GetOrderById(orderId)).ReturnsAsync(order);
+
+            await _orderService.MoveToWarehouse(orderId);
+
+            _orderRepositoryMock.Verify(repo => repo.UpdateOrder(orderId, OrderStatus.InWarehouse), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task MoveToShipmentAsync_ShouldUpdateOrderStatus()
+        {
+            var orderId = Guid.NewGuid();
+            var order = new Order
+            {
+                Id = orderId,
+                ProductName = "Kostka Rubika",
+                Payment = PaymentType.Card,
+                Price = 200,
+                Client = ClientType.Person,
+                Address = "Testowa 10",
+                OrderStatus = OrderStatus.InWarehouse
+            };
+
+            _orderRepositoryMock.Setup(repo => repo.GetOrderById(orderId)).ReturnsAsync(order);
+
+            await _orderService.MoveToShipment(orderId);
+
+            _orderRepositoryMock.Verify(repo => repo.UpdateOrder(orderId, OrderStatus.InShipment), Times.Once);
+            _orderRepositoryMock.Verify(repo => repo.UpdateOrder(orderId, OrderStatus.Closed), Times.Once);
+        }
 
 
-//namespace OrderApp.Tests
-//{
-//    [TestClass]
-//    public class OrderTests
-//    {
-//        [TestMethod]
-//        public void CreateOrderTest()
-//        {
+        [TestMethod]
+        public async Task MoveToWarehouseAsync_ShouldReturnToClient_WhenCashPaymentExceedsLimit()
+        {
+            var orderId = Guid.NewGuid();
+            var order = new Order
+            {
+                Id = orderId,
+                ProductName = "Drogi Produkt",
+                Payment = PaymentType.CashWhenDelivered,
+                Price = 3000,
+                Client = ClientType.Company,
+                Address = "Ekskluzywna 1",
+                OrderStatus = OrderStatus.New
+            };
 
-//            var orderRepository= new OrderRepository();
-//            var orderService = new OrderService(orderRepository); 
-//            var orderConsoleUI = new OrderConsoleUI(orderService);
+            _orderRepositoryMock.Setup(repo => repo.GetOrderById(orderId)).ReturnsAsync(order);
 
-//            var order = new Order
-//            {
-//                Id = Guid.NewGuid(),
-//                ProductName = "Kostka Rubika",
-//                Payment = new Payment { Price = 12, PaymentType = PaymentType.Card },
-//                Client = new Client { ClientType = ClientType.Person },
-//                Address = "Testowa 10",
-//                OrderStatus = OrderStatus.New
-//            };
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => _orderService.MoveToWarehouse(orderId));
 
-//            orderService.CreateOrder(order);
-//            var orders = orderService.GetOrders();
+            _orderRepositoryMock.Verify(repo => repo.UpdateOrder(orderId, OrderStatus.ReturnedToClient), Times.Once);
+        }
 
-//            Assert.AreEqual(1, orders.Count);
-//            Assert.AreEqual("Kostka Rubika", orders[0].ProductName);
-//            Assert.AreEqual(12, orders[0].Payment.Price);
-//            Assert.AreEqual(PaymentType.Card, orders[0].Payment.PaymentType);
-//            Assert.AreEqual(ClientType.Person, orders[0].Client.ClientType);
-//            Assert.AreEqual("Testowa 10", orders[0].Address);
-//            Assert.AreEqual(OrderStatus.New, orders[0].OrderStatus);
-//        }
-
-//        [TestMethod]
-//        public void ToWarehouseOrderTest()
-//        {
-
-//            var orderRepository = new OrderRepository();
-//            var orderService = new OrderService(orderRepository);
-//            var orderConsoleUI = new OrderConsoleUI(orderService);
-            
-
-//            var order = new Order
-//            {
-//                Id = Guid.NewGuid(),
-//                ProductName = "Kostka Rubika",
-//                Payment = new Payment { Price = 12, PaymentType = PaymentType.Card },
-//                Client = new Client { ClientType = ClientType.Person },
-//                Address = "Testowa 10",
-//                OrderStatus = OrderStatus.New
-//            };
-
-//            orderService.CreateOrder(order);
-//            orderService.MoveToWarehouse(order.Id);
-//            var updatedOrder = orderService.GetOrders().Find(o => o.Id == order.Id);
-
-//            Assert.IsNotNull(updatedOrder);
-//            Assert.AreEqual(OrderStatus.InWarehouse, updatedOrder.OrderStatus);
-//        }
-
-
-//        [TestMethod]
-//        public void MoveToShipmentTest_ValidId()
-//        {
-          
-//            var orderRepository = new OrderRepository();
-//            var orderService = new OrderService(orderRepository);
-//            var orderConsoleUI = new OrderConsoleUI(orderService);
-
-//            var order = new Order
-//            {
-//                Id = Guid.NewGuid(),
-//                ProductName = "Kostka Rubika",
-//                Payment = new Payment { Price = 12, PaymentType = PaymentType.Card },
-//                Client = new Client { ClientType = ClientType.Person },
-//                Address = "Testowa 10",
-//                OrderStatus = OrderStatus.InWarehouse
-//            };
-
-//            orderService.CreateOrder(order);
-//            orderService.MoveToWarehouse(order.Id); 
-
-//            orderService.MoveToShipment(order.Id);
-
-//            var updatedOrder = orderService.GetOrders().Find(o => o.Id == order.Id);
-//            Assert.IsNotNull(updatedOrder);
-//            Assert.AreEqual(OrderStatus.InShipment, updatedOrder.OrderStatus);
-//        }
-
-
-//    }
-    
-//}
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OrderConsoleApp.Enum;
 using OrderConsoleApp.Interaction;
 using OrderConsoleApp.Model;
@@ -10,16 +11,18 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        var optionsBuilder = new DbContextOptionsBuilder<OrderAppDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5433;Database=postgres;Username=postgres;Password=postgres"); 
+        var serviceProvider = new ServiceCollection()
+          .AddDbContext<OrderAppDbContext>(options =>
+              options.UseNpgsql("Host=localhost;Port=5433;Database=postgres;Username=postgres;Password=postgres"))
+          .AddScoped<IOrderRepository, OrderRepository>()
+          .AddScoped<IOrderService, OrderService>()
+          .AddScoped<IOrderConsoleUI, OrderConsoleUI>()
+          .BuildServiceProvider();
 
-        using (var dbContext = new OrderAppDbContext(optionsBuilder.Options))
+        using (var scope = serviceProvider.CreateScope()) 
         {
-            IOrderRepository orderRepository = new OrderRepository(dbContext);
-            IOrderService orderService = new OrderService(orderRepository);
-            IOrderConsoleUI ui = new OrderConsoleUI(orderService);
+            var ui = scope.ServiceProvider.GetRequiredService<IOrderConsoleUI>();
             await ui.DisplayMenu();
-
         }
 
     }
