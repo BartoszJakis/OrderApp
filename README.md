@@ -1,6 +1,6 @@
 # OrderApp
 
-A console application that allows order management. Users can add orders, change their status, and track the fulfillment process.
+A console application that allows order management. Users can add orders, change their status, and track the delivery process.
 
 # Technologies
 
